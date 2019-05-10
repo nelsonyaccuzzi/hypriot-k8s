@@ -1,0 +1,15 @@
+---
+
+  - name: Install Weave
+    shell: kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+
+  - name: Wait Weave pods to be Ready
+    shell: kubectl wait --namespace kube-system --for condition=Ready -l name=weave-net pods --timeout=600s
+
+
+  - name: Wait DNS pods to be Ready
+    shell: kubectl wait --namespace kube-system --for condition=Ready -l k8s-app=kube-dns pods --timeout=600s
+
+
+  - name: Wait Nodes to be Ready
+    shell: kubectl wait --all --for condition=Ready nodes --timeout=600s

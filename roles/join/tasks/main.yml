@@ -1,0 +1,4 @@
+---
+    
+  - name: Kubeadm Join
+    shell: kubeadm join --token {{ hostvars['holder']['token'] }} --discovery-token-unsafe-skip-ca-verification {{ groups['master'][0] }}:6443     

@@ -1,0 +1,17 @@
+---
+- hosts: all
+  roles:
+    - common
+    - cleanup
+
+- hosts: master
+  roles:
+    - init
+      
+- hosts: worker
+  roles:
+    - join
+
+- hosts: master
+  roles:
+    - setup

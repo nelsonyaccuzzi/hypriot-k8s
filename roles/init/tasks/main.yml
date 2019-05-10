@@ -1,0 +1,32 @@
+---
+
+  - name: Generate Random Token
+    shell: kubeadm token generate
+    register: token
+    
+  - name: Kubeadm Init
+    shell: kubeadm init --token {{ token.stdout }}
+    
+  - name: Add KubeAdm Token to dummy host
+    add_host:
+      name: "holder"
+      token: "{{ token.stdout }}"
+
+  - name: Make Kube Config Dir
+    file:
+      path: ~/.kube
+      state: directory
+      
+  - name: Copy and change ownership of Kube Config
+    copy:
+      src: /etc/kubernetes/admin.conf
+      dest: ~/.kube/config
+      owner: "{{ ansible_user }}"
+      group: "{{ ansible_user_group }}"
+      remote_src: yes
+
+  - name: Fetch Kube Config
+    fetch:
+      src: ~/.kube/config
+      dest: ~/.kube/
+      flat: yes

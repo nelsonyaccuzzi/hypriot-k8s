@@ -1,0 +1,6 @@
+[master]
+rpi1
+
+[worker]
+rpi2
+rpi3

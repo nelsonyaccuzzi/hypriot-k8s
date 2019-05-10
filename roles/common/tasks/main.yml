@@ -1,0 +1,42 @@
+---
+
+  - name: Update all
+    apt:
+      upgrade: yes
+      update_cache: yes
+
+  - name: Add K8s GPG Keys
+    apt_key:
+      url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+      state: present
+      
+  - name: Add K8s repo
+    apt_repository:
+      repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
+      state: present
+
+  - name: Install neccesary Packages
+    apt:
+      name: "{{ item.name }}={{ item.version }}"
+      update_cache: yes
+    loop: "{{ packages }}"
+
+  - name: Copy Docker Daemon Config
+    copy:
+      src: daemon.json
+      dest: /etc/docker/daemon.json
+
+  - name: Create Docker Service Directory 
+    file:
+      path: /etc/systemd/system/docker.service.d
+      state: directory
+
+  - name: System Daemon Reload
+    systemd:
+      daemon_reload: yes
+
+  - name: Restart Docker Daemon
+    systemd:
+      name: docker
+      state: restarted
+
