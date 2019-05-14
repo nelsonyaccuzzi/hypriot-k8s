@@ -125,6 +125,15 @@ ansible-playbook -i inventory main.yml
 
 ```
 
+To execute de setup config of the cluster run the following command
+
+```
+
+ansible-playbook -i inventory setup.yml
+
+```
+
+
 ### Checking
 
 Checking on nodes
