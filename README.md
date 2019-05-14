@@ -155,7 +155,6 @@ rpi3   Ready    <none>   60m   v1.14.1
 - Hosts file setup on nodes
 - Flash hostname parameter usage with cloud-init config files
 - MetalLB and Ingress Controller deployment on setup
-- Cluster Init and Setup playbook separation
 
 ## References
 

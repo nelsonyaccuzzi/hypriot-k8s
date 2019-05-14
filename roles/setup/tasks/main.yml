@@ -3,6 +3,11 @@
   - name: Install Weave
     shell: kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
 
+  - name: Set workers label
+    shell: kubectl label nodes {{ item }} node-role.kubernetes.io/worker=worker
+    loop: "{{ groups['worker'] }}" 
+
+
   - name: Wait Weave pods to be Ready
     shell: kubectl wait --namespace kube-system --for condition=Ready -l name=weave-net pods --timeout=600s
 
