@@ -2,7 +2,6 @@
 
   - name: Update all
     apt:
-      upgrade: yes
       update_cache: yes
 
   - name: Add K8s GPG Keys
