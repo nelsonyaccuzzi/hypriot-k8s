@@ -7,8 +7,8 @@ ansible_user_group: users
 
 # Software Packages
 packages:
-  - { name: kubeadm, version: 1.15.0-00}
-  - { name: kubelet, version: 1.15.0-00}
-  - { name: kubectl, version: 1.15.0-00}
-  - { name: docker-ce, version: 18.06.3~ce~3-0~raspbian}
+  - { name: kubeadm, version: 1.18.3-00}
+  - { name: kubelet, version: 1.18.3-00}
+  - { name: kubectl, version: 1.18.3-00}
+  - { name: docker-ce, version: 5:19.03.11~3-0~raspbian-buster}
 

@@ -37,8 +37,8 @@ Download the HypriotOS image from the [Official Repo Realease Page](https://gith
 
 ```
 
-wget https://github.com/hypriot/image-builder-rpi/releases/download/v1.10.1/hypriotos-rpi-v1.10.1.img.zip
-unzip hypriotos-pi-v1.10.1.img.zip
+wget https://github.com/hypriot/image-builder-rpi/releases/download/v1.10.1/hypriotos-rpi-v1.12.2.img.zip
+unzip hypriotos-pi-v1.12.2.img.zip
 
 ```
 
@@ -142,9 +142,9 @@ Checking on nodes
 kubectl get nodes
 
 NAME   STATUS   ROLES    AGE   VERSION
-rpi1   Ready    master   61m   v1.14.1
-rpi2   Ready    <none>   60m   v1.14.1
-rpi3   Ready    <none>   60m   v1.14.1
+rpi1   Ready    master   61m   v1.18.3
+rpi2   Ready    worker   60m   v1.18.3
+rpi3   Ready    worker   60m   v1.18.3
 
 ```
 
