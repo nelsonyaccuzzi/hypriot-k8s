@@ -1,0 +1,23 @@
+#cloud-config
+# vim: syntax=yaml
+
+hostname: {{ inventory_hostname }}
+manage_etc_hosts: true
+
+users:
+  - name: pi
+    primary-group: users
+    shell: /bin/bash
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: users,docker
+    ssh-import-id: None
+    lock_passwd: true
+    ssh-authorized-keys:
+      - {{lookup('file', 'keys/id_k8s.pub')}}
+
+locale: "en_US.UTF-8"
+
+package_upgrade: false
+
+runcmd:
+  - 'systemctl restart avahi-daemon'
