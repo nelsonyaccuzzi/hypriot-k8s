@@ -1,3 +1,5 @@
 *.img
 *.retry
 id_*
+keys/*
+user-data/*
