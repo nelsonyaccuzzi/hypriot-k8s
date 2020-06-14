@@ -24,3 +24,9 @@
       src: templates/user-data.j2
       dest: "user-data/{{ inventory_hostname }}"
     delegate_to: localhost
+
+  - name: Populate hosts in localhost
+    lineinfile:
+      path: /etc/hosts
+      line: "{{ network.ip_address }} {{ inventory_hostname }}"
+    delegate_to: localhost
