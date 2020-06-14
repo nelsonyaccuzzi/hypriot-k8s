@@ -1,0 +1,6 @@
+# Network
+start_ip_address: 192.168.0.210
+network_mask: 255.255.0.0
+gateway_ip_address: 192.168.0.1
+dns_ip_address: 192.168.0.35
+
