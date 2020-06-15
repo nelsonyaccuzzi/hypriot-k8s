@@ -1,0 +1,19 @@
+- hosts: master
+  become: yes
+  tasks:
+
+  - name: Install Keepalived
+    apt:
+      name: keepalived
+      state: present
+
+  - name: Render Keepalived configuration
+    template:
+      src: templates/keepalived.j2
+      dest: /etc/keepalived/keepalived.conf
+
+  - name: Enable and Start Keepalived
+    systemd:
+      name: keepalived
+      state: started
+      enabled: yes
