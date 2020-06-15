@@ -3,17 +3,17 @@
 
   - name: Generate keys dir
     file:
-      name: keys
+      name: ../keys
       state: directory
 
   - name: Generate user-data dir
     file:
-      name: user-data
+      name: ../user-data
       state: directory
 
   - name: Generate ssh key pair
     openssh_keypair:
-      path: keys/id_k8s
+      path: ../keys/id_k8s
 
 - hosts: all
   gather_facts: no
@@ -22,10 +22,11 @@
   - name: Render templates
     template:
       src: templates/user-data.j2
-      dest: "user-data/{{ inventory_hostname }}"
+      dest: "../user-data/{{ inventory_hostname }}"
     delegate_to: localhost
 
   - name: Populate hosts in localhost
+    become: yes
     lineinfile:
       path: /etc/hosts
       line: "{{ network.ip_address }} {{ inventory_hostname }}"
