@@ -3,3 +3,5 @@
 id_*
 keys/*
 user-data/*
+*.test.yml
+playbooks/cni.yaml
