@@ -1,5 +1,5 @@
  ansible_user: pi
- ansible_become: yes
- ansible_ssh_private_key_file: id_k8s
+ #ansible_become: yes
+ ansible_ssh_private_key_file: keys/id_k8s
  ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
  ansible_user_group: users

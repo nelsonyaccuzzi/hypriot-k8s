@@ -1,7 +1,5 @@
 network:
   interface: eth0
-  ip_address: "{{ start_ip_address | ipmath( groups['all'].index(inventory_hostname) + 1 ) }}" 
   mask: "{{ network_mask }}"
   gateway: "{{ gateway_ip_address }}"
   dns: "{{ dns_ip_address }}"
-master_vip: "{{ start_ip_address }}"

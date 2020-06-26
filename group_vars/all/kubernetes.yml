@@ -1,0 +1,4 @@
+# kubernetes_version: 1.18.3
+kubernetes_short_version: "{{ kubernetes_version.split('.')[0]  }}.{{ kubernetes_version.split('.')[1] }}"
+
+kubeadm_dir: /tmp/kubeadm
