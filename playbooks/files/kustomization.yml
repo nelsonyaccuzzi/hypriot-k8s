@@ -1,0 +1,7 @@
+patchesJson6902:
+- target:
+    version: v1
+    kind: Pod
+    name: kube-apiserver
+    namespace: kube-system
+  path: patch.yml

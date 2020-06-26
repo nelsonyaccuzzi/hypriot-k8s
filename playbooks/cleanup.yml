@@ -1,0 +1,23 @@
+- hosts: all
+  become: yes
+  tasks:
+
+  - name: Reset KubeAdm
+    shell: kubeadm reset -f
+    
+  - name: Clean IP Tables
+    shell: |
+      iptables -F 
+      iptables -t nat -F 
+      iptables -t mangle -F 
+      iptables -X
+
+  - name: Clean CNI Config
+    file:
+      path: /etc/cni/net.d
+      state: absent
+
+  - name: Delete Kubeadm Temp Dir
+    file:
+      path: "{{ kubeadm_dir }}"
+      state: absent

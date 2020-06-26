@@ -1,0 +1,57 @@
+- hosts: all
+  become: yes
+  tasks:
+
+  - name: Populate /etc/hosts with inventory
+    lineinfile:
+      dest: /etc/hosts
+      line: "{{ hostvars[item].ansible_host }} {{ item }}"
+    loop: "{{ groups['all'] }}"
+
+  - name: Populate /etc/hosts with master vip
+    lineinfile:
+      dest: /etc/hosts
+      line: "{{ master_ip_address }} {{ cluster_address }}"
+
+  - name: Update all
+    apt:
+      update_cache: yes
+ 
+  - name: Add K8s GPG Keys
+    apt_key:
+      url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+      state: present
+ 
+  - name: Add K8s repo
+    apt_repository:
+      repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
+      state: present
+    register: apt_res
+    retries: 5
+    until: apt_res is success
+ 
+  - name: Install neccesary Packages
+    apt:
+      name: "{{ item.name }}={{ item.version }}"
+      update_cache: yes
+    loop: "{{ packages }}"
+ 
+  - name: Copy Docker Daemon Config
+    copy:
+      src: files/daemon.json
+      dest: /etc/docker/daemon.json
+ 
+  - name: Create Docker Service Directory
+    file:
+      path: /etc/systemd/system/docker.service.d
+      state: directory
+ 
+  - name: System Daemon Reload
+    systemd:
+      daemon_reload: yes
+ 
+  - name: Restart Docker Daemon
+    systemd:
+      name: docker
+      state: restarted
+

@@ -1,0 +1,6 @@
+- op: replace
+  path: /spec/containers/0/livenessProbe/initialDelaySeconds
+  value: 30
+- op: replace
+  path: /spec/containers/0/livenessProbe/timeoutSeconds
+  value: 30

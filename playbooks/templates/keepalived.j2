@@ -9,6 +9,6 @@ vrrp_instance VI_1 {
         auth_pass 1111
     }
     virtual_ipaddress {
-        {{ start_ip_address }}
+        {{ master_ip_address }}
     }
 }

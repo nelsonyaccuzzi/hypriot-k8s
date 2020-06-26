@@ -1,0 +1,69 @@
+- hosts: master[0]
+  become: yes
+  tasks:
+
+  - name: Generate Token
+    shell: kubeadm token generate
+    register: token
+    
+  - name: Generate Certificate Key
+    shell: kubeadm alpha certs certificate-key
+    register: key
+
+  - name: Add KubeAdm Token to dummy host
+    add_host:
+      name: "holder"
+      token: "{{ token.stdout }}"
+      key: "{{ key.stdout }}"
+
+  - name: Create temporal kubeadm dir
+    file:
+      path: "{{ kubeadm_dir }}"
+      state: directory
+
+  - name: Create temporal kubeadm kustom dir
+    file:
+      path: "{{ kubeadm_dir }}/kustom"
+      state: directory
+
+  - name: Render Init Config File
+    template:
+      src: templates/init-config.j2
+      dest: "{{ kubeadm_dir }}/config.yaml"
+  
+  - name: Copy Kustomizations
+    copy:
+      src: files/kustomization.yml
+      dest: "{{ kubeadm_dir }}/kustom/kustomization.yml"
+ 
+  - name: Copy Patch
+    copy:
+      src: files/patch.yml
+      dest: "{{ kubeadm_dir }}/kustom/patch.yml"
+      
+  - name: Kubeadm Init
+    shell: kubeadm init --upload-certs --config {{ kubeadm_dir }}/config.yaml -k {{ kubeadm_dir}}/kustom
+  
+  - name: Delete Kubeadm dir
+    file:
+      path: "{{ kubeadm_dir }}"
+      state: absent
+      
+  - name: Fetch Kube Config
+    fetch:
+      src: /etc/kubernetes/admin.conf
+      dest: ~/.kube/config
+      flat: yes
+
+  - name: Download CNI Definition
+    get_url:
+      url: "https://cloud.weave.works/k8s/v{{ kubernetes_short_version }}/net.yaml"
+      dest: "{{playbook_dir}}/cni.yaml"
+    delegate_to: localhost
+
+  - name: Install CNI Plugin
+    become: no
+    k8s:
+      src: cni.yaml
+      state: present
+    delegate_to: localhost

@@ -1,0 +1,36 @@
+- hosts: master[1:]
+  become: yes
+  tasks:
+
+  - name: Create temporal kubeadm dir
+    file:
+      path: "{{ kubeadm_dir }}"
+      state: directory
+
+  - name: Create temporal kubeadm kustom dir
+    file:
+      path: "{{ kubeadm_dir }}/kustom"
+      state: directory
+      
+  - name: Render Join Config File
+    template:
+      src: templates/join-master-config.j2
+      dest: "{{ kubeadm_dir }}/config.yaml"
+  
+  - name: Copy Kustomizations
+    copy:
+      src: files/kustomization.yml
+      dest: "{{ kubeadm_dir }}/kustom/kustomization.yml"
+ 
+  - name: Copy Patch
+    copy:
+      src: files/patch.yml
+      dest: "{{ kubeadm_dir }}/kustom/patch.yml"
+      
+  - name: Kubeadm Join Master
+    shell: kubeadm join --config {{ kubeadm_dir }}/config.yaml -k {{ kubeadm_dir }}/kustom
+
+  - name: Delete Kubeadm dir
+    file:
+      path: "{{ kubeadm_dir }}"
+      state: absent

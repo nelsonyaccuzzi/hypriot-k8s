@@ -29,5 +29,5 @@
     become: yes
     lineinfile:
       path: /etc/hosts
-      line: "{{ network.ip_address }} {{ inventory_hostname }}"
+      line: "{{ ansible_host }} {{ inventory_hostname }}"
     delegate_to: localhost

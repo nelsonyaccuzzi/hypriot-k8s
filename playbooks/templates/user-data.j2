@@ -2,7 +2,6 @@
 # vim: syntax=yaml
 
 hostname: {{ inventory_hostname }}
-manage_etc_hosts: true
 
 users:
   - name: pi
@@ -21,9 +20,9 @@ write_files:
         auto lo
         iface lo inet loopback
 
-        auto eth0
-        iface eth0 inet static
-        address {{ network.ip_address }}
+        auto {{ network.interface }}
+        iface {{ network.interface }} inet static
+        address {{ ansible_host }}
         netmask {{ network.mask }}
         gateway {{ network.gateway }}
         dns-nameservers {{ network.dns }} 8.8.8.8
