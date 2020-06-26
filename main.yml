@@ -1,17 +1,16 @@
 ---
-- hosts: all
-  roles:
-    - common
-    - cleanup
 
-- hosts: master
-  roles:
-    - init
-      
-- hosts: worker
-  roles:
-    - join
+- name: Prepare Nodes
+  import_playbook: playbooks/prepare.yml
 
-- hosts: master
-  roles:
-    - setup
+- name: Configure Keepalived
+  import_playbook: playbooks/keepalived.yml
+
+- name: Kubeadm Init
+  import_playbook: playbooks/init.yml
+
+- name: Kubeadm Join Master
+  import_playbook: playbooks/join-master.yml
+
+- name: Kubeadm Join Worker
+  import_playbook: playbooks/join-worker.yml
