@@ -42,7 +42,7 @@ cd hypriot-k8s
 
 ### Complete the inventory
 
-Edit the `inventory` file with your variables and hosts
+Edit the `inventory` and `vars` file with your variables and hosts
 
 ```
 [master]
@@ -55,7 +55,10 @@ rpi-wrk-01 ansible_host=192.168.0.214
 rpi-wrk-02 ansible_host=192.168.0.215
 rpi-wrk-03 ansible_host=192.168.0.216
 
-[all:vars]
+```
+
+```
+
 master_ip_address: 192.168.0.210
 network_mask: 255.255.0.0
 gateway_ip_address: 192.168.0.1
@@ -70,7 +73,7 @@ kubernetes_version: 1.18.4
 
 ```
 
-ansible-playbook -i inventory playbooks/configs.yml
+ansible-playbook -i inventory -e "@vars" playbooks/configs.yml
 
 ```
 After this, a folder name `user-data` will appear in this repo with the cloud-init files for each raspberry
@@ -119,7 +122,7 @@ Execute the playbook
 
 ```
 
-ansible-playbook -i inventory main.yml
+ansible-playbook -i inventory -e "@vars" main.yml
 
 ```
 
@@ -131,12 +134,12 @@ Checking on nodes
 kubectl get nodes
 
 NAME         STATUS   ROLES    AGE   VERSION
-rpi-mst-01   Ready    master   23h   v1.18.4
-rpi-mst-02   Ready    master   23h   v1.18.4
-rpi-mst-03   Ready    master   23h   v1.18.4
-rpi-wrk-01   Ready    worker   23h   v1.18.4
-rpi-wrk-02   Ready    worker   23h   v1.18.4
-rpi-wrk-03   Ready    worker   23h   v1.18.4
+rpi-mst-01   Ready    master   23h   v1.18.5
+rpi-mst-02   Ready    master   23h   v1.18.5
+rpi-mst-03   Ready    master   23h   v1.18.5
+rpi-wrk-01   Ready    worker   23h   v1.18.5
+rpi-wrk-02   Ready    worker   23h   v1.18.5
+rpi-wrk-03   Ready    worker   23h   v1.18.5
 
 ```
 

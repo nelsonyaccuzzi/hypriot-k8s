@@ -7,12 +7,5 @@ rpi-mst-03 ansible_host=192.168.0.213
 rpi-wrk-01 ansible_host=192.168.0.214
 rpi-wrk-02 ansible_host=192.168.0.215
 rpi-wrk-03 ansible_host=192.168.0.216
-
-[all:vars]
-master_ip_address: 192.168.0.210
-network_mask: 255.255.0.0
-gateway_ip_address: 192.168.0.1
-dns_ip_address: 192.168.0.35
-
-cluster_address: k8s
-kubernetes_version: 1.18.4
+rpi-wrk-04 ansible_host=192.168.0.217
+rpi-wrk-05 ansible_host=192.168.0.218

@@ -1,5 +1,5 @@
 packages:
-  - { name: kubeadm, version: "{{ kubernetes_version }}-01"}
-  - { name: kubelet, version: "{{ kubernetes_version }}-01"}
-  - { name: kubectl, version: "{{ kubernetes_version }}-01"}
+  - { name: kubeadm, version: "{{ kubernetes_version }}-00"}
+  - { name: kubelet, version: "{{ kubernetes_version }}-00"}
+  - { name: kubectl, version: "{{ kubernetes_version }}-00"}
   - { name: docker-ce, version: 5:19.03.11~3-0~raspbian-buster}

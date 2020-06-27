@@ -13,10 +13,6 @@
       dest: /etc/hosts
       line: "{{ master_ip_address }} {{ cluster_address }}"
 
-  - name: Update all
-    apt:
-      update_cache: yes
- 
   - name: Add K8s GPG Keys
     apt_key:
       url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
