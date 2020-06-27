@@ -4,11 +4,16 @@ Create a Kubernetes Cluster using Raspberry Pi's, HypriotOS, and KubeAdm.
 
 ## Prerequisites
 
-- Raspberry Pi 3
+- Raspberry Pi 3/4
 
-With KubeAdm you only need one node (1 master) to start playing with K8s, so feel free to add up any number of nodes you want. This playbook was tested with 3 nodes (1 master and 2 workers)
+With KubeAdm you only need one node (1 master) to start playing with K8s, so feel free to add up any number of nodes you want. 
 
-- [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) 2.7 or higher
+
+- Linux
+
+Ansible only works under Linux. So if you are using a Windows workstation you can create a Linux Virtual Machine or use [WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10)
+
+- [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) 2.8 or higher
 
 Ansible is a powerful configuration manager that is used here to bootstrap the K8s cluster.
 
@@ -16,71 +21,76 @@ Ansible is a powerful configuration manager that is used here to bootstrap the K
 
 HypriotOS is a Debian based distribution for Raspberry Pi. It preloads docker and optimize it to make it easy to use. It also bring support for cloud-init configs.
 
-- [Hypriot Flash Command Line Script](https://github.com/hypriot/flash#installation)
+- Openshift Python Module
 
-Hypriot has his own flash tool that allow to preconfigure users, ssh keys, hostname, etc. using cloud-init config files.
+Ansible use it to operate with the Kubernetes Cluster. You can install it easily with `pip`
 
-> Ansible and Hypriot flash tool don't work on Windows Workstations
+```
+
+pip install openshift
+
+```
 
 ## Steps
 
-### Clone the repo
+### Clone the repository
 
 ```
 git clone https://github.com/nelsonyaccuzzi/hypriot-k8s.git
 cd hypriot-k8s
 ```
 
-### Flash SD Cards
+### Complete the inventory
+
+Edit the `inventory` file with your variables and hosts
+
+```
+[master]
+rpi-mst-01 ansible_host=192.168.0.211
+rpi-mst-02 ansible_host=192.168.0.212
+rpi-mst-03 ansible_host=192.168.0.213
+
+[worker]
+rpi-wrk-01 ansible_host=192.168.0.214
+rpi-wrk-02 ansible_host=192.168.0.215
+rpi-wrk-03 ansible_host=192.168.0.216
+
+[all:vars]
+master_ip_address: 192.168.0.210
+network_mask: 255.255.0.0
+gateway_ip_address: 192.168.0.1
+dns_ip_address: 192.168.0.35
+
+cluster_address: k8s
+kubernetes_version: 1.18.4
+
+```
+
+### Create cloud-init configs
+
+```
+
+ansible-playbook -i inventory playbooks/configs.yml
+
+```
+After this, a folder name `user-data` will appear in this repo with the cloud-init files for each raspberry
+
+### Download Image
 
 Download the HypriotOS image from the [Official Repo Realease Page](https://github.com/hypriot/image-builder-rpi/releases).
 
 ```
 
-wget https://github.com/hypriot/image-builder-rpi/releases/download/v1.10.1/hypriotos-rpi-v1.12.2.img.zip
+wget https://github.com/hypriot/image-builder-rpi/releases/download/v1.12.2/hypriotos-rpi-v1.12.2.img.zip
 unzip hypriotos-pi-v1.12.2.img.zip
 
 ```
 
-Create a SSH Public/Private Key pair
+### Flash MicroSD Cards
 
-```
+You can use any tool you like to do this, but in the end you have to copy the content of each cloud-init file in the `user-data` file inside the /boot partition of each microSD card
 
-ssh-keygen -f id_k8s
-
-```
- 
-Create cloud-init config files for every node. The only thing that differs between the files is the hostname. 
-
-Cloud-init look like
-
-```
-#cloud-config
-
-hostname: rpi1
-manage_etc_hosts: true
-
-users:
-  - name: pi
-    primary-group: users
-    shell: /bin/bash
-    sudo: ALL=(ALL) NOPASSWD:ALL
-    groups: users,docker
-    ssh-import-id: None
-    lock_passwd: true
-    ssh-authorized-keys:
-      - <id_k8s.pub_content>
-
-package_upgrade: false
-
-runcmd:
-  - 'systemctl restart avahi-daemon'
-
-```
-
-Change the `ssh-authorized-keys` values with your own ssh public key and the hostname between files. Examples of cloud-init config files are in the flash dir
-
-Flash the microSD cards
+If you are using Linux you can use the [Hypriot Flash Tool](https://github.com/hypriot/flash) to flash and copy the cloud-init in the same command, like this
 
 ```
 
@@ -94,26 +104,14 @@ Repeat the command for every microSD card, changing the cloud-init file.
 
 ### Check Connectivity
 
-> The same IP addresses and DNS names must be configured for this playbook to work. Configure your DHCP and DNS to deliver the same IP addresses and names to your nodes. 
-
-Populate your inventory file
-
-```
-[master]
-rpi1
-
-[worker]
-rpi2
-rpi3
-```
-
-Check connectiviy
+> The cloud-init configs configures the eth0 interface with the inventory specified ip address and network configuration, wlan0 support will be added later.
 
 ```
 
-ansible all -m ping -i inventory --private-key id_k8s -u pi
+ansible all -m ping -i inventory --private-key keys/id_k8s -u pi
 
 ```
+> Passwordless connections are also configured for the pi user and the keys are located in the `keys` folder
 
 ### Create the K8s Cluster
 
@@ -125,15 +123,6 @@ ansible-playbook -i inventory main.yml
 
 ```
 
-To execute de setup config of the cluster run the following command
-
-```
-
-ansible-playbook -i inventory setup.yml
-
-```
-
-
 ### Checking
 
 Checking on nodes
@@ -141,20 +130,25 @@ Checking on nodes
 ```
 kubectl get nodes
 
-NAME   STATUS   ROLES    AGE   VERSION
-rpi1   Ready    master   61m   v1.18.3
-rpi2   Ready    worker   60m   v1.18.3
-rpi3   Ready    worker   60m   v1.18.3
+NAME         STATUS   ROLES    AGE   VERSION
+rpi-mst-01   Ready    master   23h   v1.18.4
+rpi-mst-02   Ready    master   23h   v1.18.4
+rpi-mst-03   Ready    master   23h   v1.18.4
+rpi-wrk-01   Ready    worker   23h   v1.18.4
+rpi-wrk-02   Ready    worker   23h   v1.18.4
+rpi-wrk-03   Ready    worker   23h   v1.18.4
 
 ```
 
-## TBD
+### Cleanup Cluster
 
-- Multi Master configuration
-- Static IP Address setting on cloud-init
-- Hosts file setup on nodes
-- Flash hostname parameter usage with cloud-init config files
-- MetalLB and Ingress Controller deployment on setup
+If you want to keep playing you can start over with the following command
+
+```
+
+ansible-playbook -i inventory playbooks/cleanup.yml
+
+```
 
 ## References
 
