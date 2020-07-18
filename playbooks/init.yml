@@ -67,3 +67,15 @@
       src: cni.yaml
       state: present
     delegate_to: localhost
+
+  - name: Check Node Status
+    become: no
+    k8s:
+      state: present
+      definition:
+        api: v1
+        kind: Node
+        metadata:
+          name: "{{ inventory_hostname }}"
+      wait: yes
+    delegate_to: localhost
