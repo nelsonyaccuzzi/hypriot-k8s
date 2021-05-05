@@ -23,12 +23,11 @@ HypriotOS is a Debian based distribution for Raspberry Pi. It preloads docker an
 
 - Openshift Python Module
 
-Ansible use it to operate with the Kubernetes Cluster. You can install it easily with `pip`
+Ansible use it to operate with the Kubernetes Cluster. You can install it easily with `pip`. And due to this [issue](https://github.com/ansible-collections/community.kubernetes/issues/273) you have to set the kubernetes package version to 11.0.0
 
 ```
-
 pip install openshift
-
+pip install kubernetes==11.0.0
 ```
 
 ## Steps
@@ -66,6 +65,16 @@ dns_ip_address: 192.168.0.35
 
 cluster_address: k8s
 kubernetes_version: 1.18.4
+
+```
+### Create ssh keys
+
+You need to create the ssh keys to connect to the nodes.
+
+```
+
+mkdir keys
+ssh-keygen -f keys/id_k8s -N ""
 
 ```
 
@@ -133,13 +142,10 @@ Checking on nodes
 ```
 kubectl get nodes
 
-NAME         STATUS   ROLES    AGE   VERSION
-rpi-mst-01   Ready    master   23h   v1.18.5
-rpi-mst-02   Ready    master   23h   v1.18.5
-rpi-mst-03   Ready    master   23h   v1.18.5
-rpi-wrk-01   Ready    worker   23h   v1.18.5
-rpi-wrk-02   Ready    worker   23h   v1.18.5
-rpi-wrk-03   Ready    worker   23h   v1.18.5
+NAME         STATUS   ROLES                  AGE     VERSION
+rpi-mst-01   Ready    control-plane,master   7m4s    v1.21.0
+rpi-wrk-01   Ready    worker                 6m33s   v1.21.0
+rpi-wrk-02   Ready    worker                 6m35s   v1.21.0
 
 ```
 
