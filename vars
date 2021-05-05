@@ -4,4 +4,4 @@ gateway_ip_address: 192.168.0.1
 dns_ip_address: 192.168.0.35
 
 cluster_address: k8s
-kubernetes_version: 1.18.5
+kubernetes_version: 1.21.0
