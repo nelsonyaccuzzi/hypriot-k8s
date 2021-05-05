@@ -1,3 +1,18 @@
+- hosts: localhost
+  become: yes
+  tasks:
+
+  - name: Populate /etc/hosts with inventory
+    lineinfile:
+      dest: /etc/hosts
+      line: "{{ hostvars[item].ansible_host }} {{ item }}"
+    loop: "{{ groups['all'] }}"
+
+  - name: Populate /etc/hosts with master vip
+    lineinfile:
+      dest: /etc/hosts
+      line: "{{ master_ip_address }} {{ cluster_address }}"
+
 - hosts: all
   become: yes
   tasks:
@@ -50,4 +65,7 @@
     systemd:
       name: docker
       state: restarted
+
+
+
 
