@@ -7,7 +7,7 @@
     register: token
     
   - name: Generate Certificate Key
-    shell: kubeadm alpha certs certificate-key
+    shell: kubeadm certs certificate-key
     register: key
 
   - name: Add KubeAdm Token to dummy host
@@ -31,18 +31,18 @@
       src: templates/init-config.j2
       dest: "{{ kubeadm_dir }}/config.yaml"
   
-  - name: Copy Kustomizations
-    copy:
-      src: files/kustomization.yml
-      dest: "{{ kubeadm_dir }}/kustom/kustomization.yml"
- 
-  - name: Copy Patch
-    copy:
-      src: files/patch.yml
-      dest: "{{ kubeadm_dir }}/kustom/patch.yml"
+#  - name: Copy Kustomizations
+#    copy:
+#      src: files/kustomization.yml
+#      dest: "{{ kubeadm_dir }}/kustom/kustomization.yml"
+# 
+#  - name: Copy Patch
+#    copy:
+#      src: files/patch.yml
+#      dest: "{{ kubeadm_dir }}/kustom/patch.yml"
       
   - name: Kubeadm Init
-    shell: kubeadm init --upload-certs --config {{ kubeadm_dir }}/config.yaml -k {{ kubeadm_dir}}/kustom
+    shell: kubeadm init --upload-certs --config {{ kubeadm_dir }}/config.yaml 
   
   - name: Delete Kubeadm dir
     file:
@@ -56,6 +56,7 @@
       flat: yes
 
   - name: Download CNI Definition
+    become: no
     get_url:
       url: "https://cloud.weave.works/k8s/v{{ kubernetes_short_version }}/net.yaml"
       dest: "{{playbook_dir}}/cni.yaml"
